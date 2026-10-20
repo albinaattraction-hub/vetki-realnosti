@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ветки Реальности (полная версия)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: тёмно-фиолетовая лента. Первый и последний экраны одинаковые, между ними общий плавный фон: философия, полоса с форматом и ценой, программа, кому подходит, отзывы. */
+:root {
+  --ink: #0b0612;
+  --text: #f6f0fa;
+  --muted: #d9cce2;
+  --line: rgba(236, 224, 244, 0.32);
+  --glass: rgba(255, 255, 255, 0.14);
+  --glass-edge: rgba(255, 255, 255, 0.18);
+  --btn: rgba(168, 148, 186, 0.62);
+  --btn-hover: rgba(190, 170, 208, 0.78);
+  --paper: #e8def0;
+  --paper-ink: #34123f;
+  --paper-muted: #6b4a79;
+  --display: "Cormorant Garamond", "Times New Roman", serif;
+  --body: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--body);
+  font-weight: 300;
+  line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+  overflow-x: hidden;
+}
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { font-weight: 500; text-wrap: balance; }
+
+.band {
+  position: relative;
+  margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: clamp(56px, 9vw, 110px);
+  overflow: hidden;
+}
+.wrap { position: relative; z-index: 2; max-width: 1120px; margin: 0 auto; }
+
+.sec-title {
+  font-family: var(--display);
+  font-weight: 500;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0.14em;
+  font-size: clamp(24px, 3.8vw, 44px);
+  line-height: 1.2;
+  margin-bottom: clamp(36px, 6vw, 70px);
+}
+
+.btn {
+  display: inline-block;
+  font-family: var(--body);
+  font-weight: 400;
+  font-size: clamp(15px, 1.9vw, 20px);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--btn);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  padding: 15px 26px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.btn:hover { background: var(--btn-hover); transform: translateY(-1px); }
+.btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* Первый и последний экраны одинаковые */
+.hero, .result {
+  background:
+    radial-gradient(60% 70% at 78% 30%, rgba(132, 48, 140, 0.75), transparent 70%),
+    radial-gradient(30% 35% at 0% 60%, rgba(120, 40, 70, 0.5), transparent 70%),
+    linear-gradient(160deg, #1a0a26 0%, #2b0f3a 45%, #0b0612 100%);
+}
+
+/* 1. Первый экран */
+.hero { min-height: clamp(480px, 56vw, 680px); display: flex; align-items: center; }
+.hero .wrap { width: 100%; }
+.kicker { font-size: clamp(16px, 2.2vw, 26px); font-weight: 400; margin-bottom: 14px; }
+.hero h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(54px, 10.5vw, 122px);
+  line-height: 0.98;
+  letter-spacing: 0.01em;
+  margin-left: -0.045em;
+  margin-bottom: clamp(20px, 3vw, 34px);
+}
+.lede {
+  font-size: clamp(16px, 2.1vw, 24px);
+  line-height: 1.4;
+  max-width: 24em;
+  margin-bottom: clamp(30px, 5vw, 56px);
+}
+.sphere {
+  position: absolute;
+  z-index: 1;
+  right: -8%;
+  top: -6%;
+  width: min(62vw, 700px);
+  height: auto;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+/* Общий фон экранов между первым и последним */
+.flow {
+  margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  background:
+    radial-gradient(ellipse 60% 4% at 90% 7%, rgba(130, 44, 140, 0.5), transparent 70%),
+    radial-gradient(ellipse 60% 4% at 6% 30%, rgba(125, 42, 135, 0.45), transparent 70%),
+    radial-gradient(ellipse 65% 5% at 96% 52%, rgba(140, 52, 148, 0.55), transparent 70%),
+    radial-gradient(ellipse 60% 4% at 8% 72%, rgba(125, 42, 135, 0.45), transparent 70%),
+    radial-gradient(ellipse 70% 4% at 60% 90%, rgba(120, 40, 135, 0.45), transparent 70%),
+    linear-gradient(180deg, #0b0612 0%, #2a1038 10%, #3d1550 30%, #4d1b5c 50%, #3f1650 70%, #2f1140 88%, #1a0a26 100%);
+}
+.flow > .band, .flow > .strip { margin-left: 0; margin-right: 0; }
+.flow > .band { overflow: visible; }
+
+/* 2. Философия */
+.philosophy-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(32px, 6vw, 90px);
+  align-items: start;
+}
+.philosophy-head { min-width: 0; }
+.dot-line { position: relative; height: 2px; background: var(--text); opacity: 0.85; }
+.dot-line::after {
+  content: "";
+  position: absolute;
+  right: 12%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text);
+  transform: translateY(-50%);
+}
+.philosophy h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(34px, 5vw, 60px);
+  line-height: 1.05;
+  margin-bottom: clamp(20px, 3vw, 34px);
+}
+.statement {
+  font-size: clamp(19px, 2.4vw, 28px);
+  line-height: 1.3;
+  font-weight: 400;
+  margin-bottom: clamp(20px, 3vw, 30px);
+}
+.philosophy p.body-text {
+  font-size: clamp(16px, 1.9vw, 21px);
+  line-height: 1.5;
+  max-width: 30em;
+  margin-bottom: 1em;
+  color: var(--muted);
+}
+
+/* 3. Полоса с форматом и ценой */
+.strip {
+  position: relative;
+  background: var(--paper);
+  color: var(--paper-ink);
+  padding-block: clamp(24px, 3.4vw, 40px);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.strip-grid {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px clamp(24px, 6vw, 80px);
+}
+.strip-cell { min-width: 0; }
+.strip-label {
+  font-family: var(--display);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(24px, 3.6vw, 40px);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+.strip-value {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(26px, 3.4vw, 38px);
+  line-height: 1.15;
+  margin-top: 4px;
+}
+.strip-note { font-size: clamp(14px, 1.6vw, 17px); color: var(--paper-muted); margin-top: 4px; }
+/* Планета сидит на верхнем крае полосы, половина над ней, половина внутри */
+.strip { --sp: clamp(84px, 11vw, 128px); }
+.strip-planet {
+  position: absolute;
+  z-index: 3;
+  width: var(--sp);
+  height: var(--sp);
+  top: calc(var(--sp) * -0.5);
+  right: max(16px, calc(50% - 560px));
+  pointer-events: none;
+}
+/* Фрагмент урока: афиша с кнопкой, плеер загружается по нажатию */
+.trial-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  max-width: 880px;
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--glass-edge);
+  background:
+    radial-gradient(55% 80% at 78% 45%, rgba(150, 60, 160, 0.65), transparent 70%),
+    linear-gradient(160deg, #2b0f3a 0%, #130820 100%);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+.poster-art {
+  position: absolute;
+  right: -4%;
+  top: 50%;
+  height: 120%;
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+.poster-text {
+  position: absolute;
+  z-index: 2;
+  left: clamp(18px, 4vw, 48px);
+  right: clamp(18px, 4vw, 48px);
+  bottom: clamp(16px, 3.4vw, 40px);
+}
+.poster-text .n {
+  display: block;
+  font-size: clamp(11px, 1.3vw, 14px);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.poster-text .t {
+  display: block;
+  font-family: var(--display);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(20px, 3.4vw, 40px);
+  line-height: 1.08;
+  letter-spacing: 0.02em;
+  max-width: 14em;
+}
+.play {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 44%;
+  width: clamp(64px, 9vw, 96px);
+  height: clamp(64px, 9vw, 96px);
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--text);
+  background: rgba(190, 170, 208, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.play svg { width: 40%; height: 40%; margin-left: 6%; }
+.play:hover:not(:disabled) { background: rgba(200, 182, 218, 0.65); transform: translate(-50%, -50%) scale(1.04); }
+.play:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+.play:disabled { opacity: 0.5; cursor: default; }
+.trial-frame iframe { position: absolute; inset: 0; z-index: 4; width: 100%; height: 100%; border: 0; background: #000; }
+.trial-caption, .trial-note {
+  max-width: 880px;
+  margin: 18px auto 0;
+  font-size: clamp(15px, 1.8vw, 19px);
+  line-height: 1.45;
+  color: var(--muted);
+}
+.trial-note { font-size: clamp(14px, 1.6vw, 16px); opacity: 0.85; }
+/* Орбиты между блоками. На узком экране показывается середина, чтобы планеты не уменьшались до точек */
+.divider { position: relative; overflow: hidden; }
+.divider svg {
+  display: block;
+  width: max(760px, min(100%, 1200px));
+  max-width: none;
+  height: auto;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* 4. Программа */
+.lessons { border-bottom: 1px solid var(--line); max-width: 860px; margin: 0 auto; }
+.lesson { border-top: 1px solid var(--line); }
+.lesson summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: clamp(18px, 2.6vw, 28px) 0;
+  cursor: pointer;
+}
+.lesson summary::-webkit-details-marker { display: none; }
+.lesson summary:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+.lesson .n {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.lesson .t {
+  display: block;
+  font-family: var(--display);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+.plus { position: relative; flex: none; width: 24px; height: 24px; }
+.plus::before, .plus::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1.5px;
+  background: var(--text);
+  transition: transform 0.25s ease;
+}
+.plus::after { transform: rotate(90deg); }
+.lesson[open] .plus::after { transform: rotate(0deg); }
+.lesson .more {
+  padding: 0 0 clamp(20px, 3vw, 30px);
+  max-width: 36em;
+  font-size: clamp(16px, 1.9vw, 20px);
+  line-height: 1.5;
+  color: var(--muted);
+}
+.extras {
+  max-width: 860px;
+  margin: clamp(36px, 6vw, 64px) auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(16px, 2.4vw, 28px);
+}
+.card {
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  border-radius: 18px;
+  padding: clamp(20px, 2.6vw, 30px);
+  min-width: 0;
+}
+.card h3 {
+  font-family: var(--body);
+  font-weight: 500;
+  font-size: clamp(18px, 2.1vw, 22px);
+  line-height: 1.25;
+  margin-bottom: 14px;
+}
+.card p, .card li { font-size: clamp(14.5px, 1.6vw, 17px); line-height: 1.5; color: var(--muted); }
+.card ul { margin: 0; padding: 0; list-style: none; }
+.card li { position: relative; padding-left: 18px; margin-bottom: 6px; }
+.card li::before { content: "→"; position: absolute; left: 0; font-size: 0.85em; }
+
+/* 5. Кому подходит */
+.audience-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(28px, 4vw, 52px) clamp(24px, 4vw, 56px);
+}
+.who { min-width: 0; border-top: 1px solid var(--line); padding-top: 18px; }
+.who .num {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(34px, 4vw, 50px);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  margin-bottom: 16px;
+}
+.who p { font-size: clamp(16px, 1.9vw, 21px); line-height: 1.4; max-width: 18em; }
+
+/* 6. Отзывы */
+.review-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(16px, 2.4vw, 28px);
+}
+.card b { display: block; font-weight: 600; font-size: 15px; margin-bottom: 10px; }
+.review-grid .card p { margin: 0 0 12px; font-size: clamp(13.5px, 1.4vw, 15.5px); }
+.review-grid .card p:last-child { margin-bottom: 0; }
+.card.center { grid-column: 1 / -1; justify-self: center; width: min(100%, 560px); }
+
+/* 7. Точка А и точка Б */
+.ab-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 80px);
+}
+.ab h3 {
+  font-family: var(--body);
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: clamp(20px, 2.6vw, 28px);
+  margin-bottom: clamp(18px, 3vw, 34px);
+}
+.ab ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: clamp(16px, 2.4vw, 26px); }
+.ab li { position: relative; padding-left: 20px; font-size: clamp(16px, 2.1vw, 23px); line-height: 1.32; }
+.ab li::before { content: "•"; position: absolute; left: 2px; opacity: 0.7; }
+.result-cta {
+  margin-top: clamp(36px, 6vw, 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+.cta-note { font-size: clamp(13px, 1.5vw, 16px); color: var(--muted); text-align: right; }
+
+@media (max-width: 900px) {
+  .audience-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .philosophy-grid, .extras, .review-grid, .ab-grid, .strip-grid { grid-template-columns: minmax(0, 1fr); }
+  .audience-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .card.center { width: 100%; }
+  .sphere { width: 92vw; right: -30%; top: -2%; opacity: 0.6; }
+  .result-cta { align-items: flex-start; }
+  .cta-note { text-align: left; }
+  .btn { padding: 14px 22px; }
+  .strip { padding-top: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn, .plus::before, .plus::after { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<main>
+  <section class="band hero">
+    <svg class="sphere" id="sphere" viewBox="0 0 700 700" aria-hidden="true" fill="none"></svg>
+    <div class="wrap">
+      <p class="kicker">Авторский курс Альбины Стадниченко</p>
+      <h1>Ветки<br>Реальности</h1>
+      <p class="lede">Каббалистическая система работы с бессознательным через дыхание, символы и состояние тела.</p>
+      <a class="btn" data-pay href="#">Присоединиться сейчас</a>
+    </div>
+  </section>
+
+  <div class="flow">
+    <section class="band philosophy">
+      <div class="wrap philosophy-grid">
+        <div class="philosophy-head">
+          <h2>Философия курса</h2>
+          <div class="dot-line"></div>
+        </div>
+        <div>
+          <p class="statement">Ветки Реальности — это система трансформации твоего сознания.</p>
+          <p class="body-text">Это каббалистический инструмент работ с бессознательным через дыхание, символы и состояние тела.</p>
+          <p class="body-text">Курс объясняет, почему одни желания материализуются, а другие нет — и дает практическую систему, чтобы направлять энергию осознанно, а не хаотично.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="strip">
+      <svg class="strip-planet" id="stripPlanet" viewBox="0 0 120 120" aria-hidden="true" fill="none"></svg>
+      <div class="strip-grid">
+        <div class="strip-cell">
+          <div class="strip-label">Формат</div>
+          <div class="strip-value">Онлайн в записи</div>
+          <div class="strip-note">с доступом к живой группе сопровождения</div>
+        </div>
+        <div class="strip-cell">
+          <div class="strip-label">Ценность</div>
+          <div class="strip-value">300 €</div>
+          <div class="strip-note">стоимость участия</div>
+        </div>
+      </div>
+    </div>
+
+    <section class="band program">
+      <div class="wrap">
+        <h2 class="sec-title">Программа курса</h2>
+        <div class="lessons">
+          <details class="lesson" name="lessons" open>
+            <summary><span><span class="n">Урок 1</span><span class="t">Как мы создаём своё будущее</span></span><span class="plus" aria-hidden="true"></span></summary>
+            <p class="more">Разбираем, как мы создаём своё будущее и почему большинство делает это неосознанно.</p>
+          </details>
+          <details class="lesson" name="lessons">
+            <summary><span><span class="n">Урок 2</span><span class="t">Механика Веток Реальности</span></span><span class="plus" aria-hidden="true"></span></summary>
+            <p class="more">Как устроена механика Веток Реальности и ритуал входа в курс.</p>
+          </details>
+          <details class="lesson" name="lessons">
+            <summary><span><span class="n">Урок 3</span><span class="t">Дыхание</span></span><span class="plus" aria-hidden="true"></span></summary>
+            <p class="more">Почему без дыхания всё остальное не работает.</p>
+          </details>
+          <details class="lesson" name="lessons">
+            <summary><span><span class="n">Урок 4</span><span class="t">Очищение розами</span></span><span class="plus" aria-hidden="true"></span></summary>
+            <p class="more">Практика очищения: работа с бессознательным через образ.</p>
+          </details>
+          <details class="lesson" name="lessons">
+            <summary><span><span class="n">Урок 5</span><span class="t">Формирование ветки</span></span><span class="plus" aria-hidden="true"></span></summary>
+            <p class="more">Подключение всех шести органов чувств.</p>
+          </details>
+          <details class="lesson" name="lessons">
+            <summary><span><span class="n">Урок 6</span><span class="t">Углубление</span></span><span class="plus" aria-hidden="true"></span></summary>
+            <p class="more">Как работать с внутренними защитами.</p>
+          </details>
+          <details class="lesson" name="lessons">
+            <summary><span><span class="n">Урок 7</span><span class="t">Якорение</span></span><span class="plus" aria-hidden="true"></span></summary>
+            <p class="more">Финальная практика, которая фиксирует созданное.</p>
+          </details>
+        </div>
+        <div class="extras">
+          <article class="card">
+            <h3>Группа сопровождения с Альбиной Стадниченко</h3>
+            <p>Это не чат поддержки, а живое пространство, где мастер отвечает на твои вопросы, разбирает процессы, которые возникают в практике, и держит поле, пока ты проходишь курс.</p>
+          </article>
+          <article class="card">
+            <h3>Дополнительные материалы</h3>
+            <ul>
+              <li>методические материалы</li>
+              <li>дневник состояний</li>
+              <li>рекомендации к практикам</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band trial">
+      <div class="wrap">
+        <h2 class="sec-title">Попробуй фрагмент урока</h2>
+        <div class="trial-frame" id="trialFrame">
+          <svg class="poster-art" id="trialArt" viewBox="0 0 400 400" aria-hidden="true" fill="none"></svg>
+          <div class="poster-text">
+            <span class="n">Урок 1</span>
+            <span class="t">Как мы создаём своё будущее</span>
+          </div>
+          <button class="play" id="playBtn" type="button" aria-label="Смотреть фрагмент урока"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></button>
+        </div>
+        <p class="trial-note" id="trialNote" hidden>Видео появится здесь совсем скоро.</p>
+        <p class="trial-caption">Разбираем, как мы создаём своё будущее и почему большинство делает это неосознанно.</p>
+      </div>
+    </section>
+
+    <div class="divider" aria-hidden="true"><svg id="div1" viewBox="0 0 1200 120" fill="none"></svg></div>
+
+    <section class="band audience">
+      <div class="wrap">
+        <h2 class="sec-title">Курс подходит тем, кто:</h2>
+        <div class="audience-grid">
+          <div class="who"><div class="num">[ 1 ]</div><p>хочет понять, почему одни желания материализуются, а другие нет</p></div>
+          <div class="who"><div class="num">[ 2 ]</div><p>чувствует, что действует на автопилоте</p></div>
+          <div class="who"><div class="num">[ 3 ]</div><p>знает, чего хочет, но чувствует, что сознание замутнено</p></div>
+          <div class="who"><div class="num">[ 4 ]</div><p>хочет отличать истинное желание от желания из страха</p></div>
+          <div class="who"><div class="num">[ 5 ]</div><p>любит духовные практики и хочет идти вперёд, твёрдо стоя на земле</p></div>
+          <div class="who"><div class="num">[ 6 ]</div><p>хочет живую поддержку мастера, пока проходит практики</p></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider" aria-hidden="true"><svg id="div2" viewBox="0 0 1200 120" fill="none"></svg></div>
+
+    <section class="band reviews">
+      <div class="wrap">
+        <h2 class="sec-title">Что говорят те, кто уже прошел курс:</h2>
+        <div class="review-grid">
+          <article class="card">
+            <b>Елена</b>
+            <p>Для меня лично это было начало выбирать себя, любви к себе, проходя практики я не понимала что делаю и в процессе уже работы каждый день открытия, трансформации себя внутри (в итоге и внешне).</p>
+            <p>Я очень благодарна Альбине за курс, поддержка в чате 100%, его доступность и те перемены, стартом каких стал этот курс, это в первую очередь внутрь себя, как я и где, кто.</p>
+            <p>Каждый здесь найдет ответы на свои вопросы, выход из иллюзий, каждый день открывается новое и интересное заблуждение о себе и как с ним быть, вообщем как в кино)) Мягко и доступно приходит информация, только нужно потрудиться на свою пользу.</p>
+            <p>И да, сидеть и ждать манны с неба уже не получится после курса, ты сам уже хочешь двигаться, стоять на земле уверенно и идти спокойно вперед к целям, а не летать в мечтах, появляется путь.</p>
+          </article>
+          <article class="card">
+            <b>Татьяна</b>
+            <p>Курс Ветки реальности мне помог выбраться из иллюзий. С меня как будто сошла пелена, которую я придумала в своей голове. Как лепестки роз опадали, так и мои иллюзии сходят.</p>
+            <p>Я, углубляясь в духовные практики и медитации, на столько кайфовала, что несколько отлетала от реальности. И я это остро ощутила уже на Ветках. Я вернулась на землю, но уже с багажом всех тех знаний, полученных на обучении Каббале и Ветках.</p>
+            <p>Ветки дают понимание, что все практически просто. Когда ты идешь туда, куда тебе нужно, ты чувствуешь удовлетворение и показателем будет твое состояние и твоя энергия. Но важно именно идти, чувствуя землю под ногами.</p>
+            <p>Хочу еще сказать, что я научилась даже в ветках отслеживать где я отлетаю. Буду продолжать тренировать ветки.</p>
+          </article>
+          <article class="card center">
+            <b>Mari</b>
+            <p>Курс очень интересный, объемный, доступный к пониманию.</p>
+            <p>Альбина! Благодарю за терпение, за подробные ответы! Здесь каждая из участниц получила опыт, знания и понимание себя.</p>
+            <p>Практики дали мне понимание своих желаний, возможность увидеть себя совершенно по новому.</p>
+            <p>Буду дальше знакомиться со своей душой)<br>Девочки, это счастье получать такую информацию в этом водовороте жизни!<br>Ещё раз благодарю за знания.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="band result">
+    <div class="wrap">
+      <h2 class="sec-title">В результате вы получите:</h2>
+      <div class="ab-grid">
+        <div class="ab">
+          <h3>Точка А</h3>
+          <ul>
+            <li>желания есть, но сознание замутнено</li>
+            <li>действуешь на автопилоте</li>
+            <li>не понимаешь почему снова здесь</li>
+          </ul>
+        </div>
+        <div class="ab">
+          <h3>Точка Б</h3>
+          <ul>
+            <li>умеешь очищать сознание перед любым намерением</li>
+            <li>формируешь ветку, различаешь истинное желание и желание из страха</li>
+            <li>якоришь созданное и не разрушаешь его сомнением</li>
+            <li>замечаешь как реальность начинает откликаться</li>
+          </ul>
+        </div>
+      </div>
+      <div class="result-cta">
+        <a class="btn" data-pay href="#">Присоединиться сейчас</a>
+        <p class="cta-note">Онлайн в записи · живая группа сопровождения · 300 €</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* Ссылка на оплату: подставляется во все кнопки сразу. */
+var PAY_URL = "https://secure.wayforpay.com/button/bb31d23775a1d";
+/* Ссылка на видео фрагмента урока: YouTube или Vimeo (доступ «по ссылке»). Пока пусто, кнопка просмотра неактивна. */
+var VIDEO_URL = "https://youtu.be/FilnmUWIaNc?si=rvyY8d-Imy78ZCCM";
+
+(function () {
+  var links = document.querySelectorAll("[data-pay]");
+  for (var i = 0; i < links.length; i++) {
+    links[i].setAttribute("href", PAY_URL || "#");
+    if (PAY_URL) { links[i].setAttribute("target", "_blank"); links[i].setAttribute("rel", "noopener"); }
+    else { links[i].addEventListener("click", function (e) { e.preventDefault(); }); }
+  }
+
+  var NS = "http://www.w3.org/2000/svg";
+  function el(name, attrs, parent) {
+    var n = document.createElementNS(NS, name);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    parent.appendChild(n);
+    return n;
+  }
+
+  /* Каркасная планета: меридианы и параллели */
+  var spinners = [];
+  function sphere(svg, cx, cy, R, tilt, mer, par, a, w, spin) {
+    a = a || 0.6; w = w || 1.3;
+    var g = el("g", { transform: "rotate(" + tilt + " " + cx + " " + cy + ")", stroke: "rgba(236,224,244," + a + ")", "stroke-width": w, fill: "none" }, svg);
+    el("circle", { cx: cx, cy: cy, r: R }, g);
+    var items = [];
+    for (var i = spin ? 0 : 1; i < mer; i++) {
+      var an = Math.PI * i / mer;
+      var e = el("ellipse", { cx: cx, cy: cy, rx: Math.abs(R * Math.cos(an)).toFixed(1), ry: R }, g);
+      if (spin) items.push({ e: e, an: an });
+    }
+    if (spin) spinners.push({ R: R, speed: spin, phi: 0, items: items });
+    for (var j = 1; j < par; j++) {
+      var p = -Math.PI / 2 + Math.PI * j / par;
+      var rr = R * Math.cos(p);
+      el("ellipse", { cx: cx, cy: (cy + R * Math.sin(p)).toFixed(1), rx: rr.toFixed(1), ry: (rr * 0.28).toFixed(1) }, g);
+    }
+  }
+
+  /* Первый экран: две планеты, медленно вращаются в разные стороны */
+  var s = document.getElementById("sphere");
+  sphere(s, 400, 300, 280, -14, 9, 8, 0.6, 1.3, 0.08);
+  sphere(s, 330, 470, 170, 18, 7, 6, 0.6, 1.3, -0.11);
+
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var running = false, last = 0;
+  function frame(t) {
+    if (!running) return;
+    var dt = last ? Math.min((t - last) / 1000, 0.1) : 0;
+    last = t;
+    for (var k = 0; k < spinners.length; k++) {
+      var sp = spinners[k];
+      sp.phi += sp.speed * dt;
+      for (var m = 0; m < sp.items.length; m++) {
+        sp.items[m].e.setAttribute("rx", Math.abs(sp.R * Math.cos(sp.items[m].an + sp.phi)).toFixed(1));
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  function startSpin() { if (running || reduce) return; running = true; last = 0; requestAnimationFrame(frame); }
+  function stopSpin() { running = false; }
+  var heroEl = document.querySelector(".hero");
+  if ("IntersectionObserver" in window && heroEl) {
+    new IntersectionObserver(function (en) { if (en[0].isIntersecting) startSpin(); else stopSpin(); }).observe(heroEl);
+  } else { startSpin(); }
+
+  /* Планеты на стыках блоков: тонкая орбита и две планеты */
+  var gid = 0;
+  function planet(svg, cx, cy, R, tilt) {
+    gid++;
+    var d = el("defs", {}, svg);
+    var rg = el("radialGradient", { id: "pg" + gid, cx: "38%", cy: "32%", r: "75%" }, d);
+    el("stop", { offset: "0", "stop-color": "#d9a6e3", "stop-opacity": "0.45" }, rg);
+    el("stop", { offset: "1", "stop-color": "#d9a6e3", "stop-opacity": "0.02" }, rg);
+    el("circle", { cx: cx, cy: cy, r: R, fill: "url(#pg" + gid + ")" }, svg);
+    sphere(svg, cx, cy, R, tilt, 6, 5, 0.75, 1.1);
+  }
+  function divider(id, bx, by, sx, sy) {
+    var svg = document.getElementById(id);
+    el("ellipse", { cx: 600, cy: 60, rx: 560, ry: 34, stroke: "rgba(236,224,244,0.38)", "stroke-width": 1, fill: "none" }, svg);
+    el("ellipse", { cx: 600, cy: 60, rx: 440, ry: 22, transform: "rotate(-3 600 60)", stroke: "rgba(236,224,244,0.2)", "stroke-width": 1, fill: "none" }, svg);
+    planet(svg, bx, by, 20, -18);
+    planet(svg, sx, sy, 9, 22);
+  }
+  divider("div1", 760, 92, 210, 84);
+  divider("div2", 440, 92, 990, 84);
+
+  /* Планета на верхнем крае светлой полосы */
+  var sp2 = document.getElementById("stripPlanet");
+  var sd = el("defs", {}, sp2);
+  var sg = el("radialGradient", { id: "sg", cx: "36%", cy: "30%", r: "80%" }, sd);
+  el("stop", { offset: "0", "stop-color": "#9a4aab" }, sg);
+  el("stop", { offset: "1", "stop-color": "#341044" }, sg);
+  el("circle", { cx: 60, cy: 60, r: 54, fill: "url(#sg)" }, sp2);
+  sphere(sp2, 60, 60, 54, -18, 7, 6, 0.55, 1);
+
+  /* Фрагмент урока: планеты на афише и загрузка плеера по нажатию */
+  var ta = document.getElementById("trialArt");
+  sphere(ta, 250, 190, 150, -14, 9, 8, 0.55, 1.2);
+  sphere(ta, 70, 95, 45, 18, 6, 5, 0.55, 1.1);
+
+  function toEmbed(u) {
+    if (!u) return "";
+    var m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([\w-]{11})/);
+    if (m) return "https://www.youtube-nocookie.com/embed/" + m[1] + "?autoplay=1&rel=0&modestbranding=1";
+    m = u.match(/vimeo\.com\/(?:video\/)?(\d+)(?:\/(\w+))?/);
+    if (m) return "https://player.vimeo.com/video/" + m[1] + (m[2] ? "?h=" + m[2] + "&" : "?") + "autoplay=1";
+    return "";
+  }
+  var embedSrc = toEmbed(VIDEO_URL);
+  var playBtn = document.getElementById("playBtn");
+  var trialFrame = document.getElementById("trialFrame");
+  if (!embedSrc) {
+    playBtn.disabled = true;
+    document.getElementById("trialNote").hidden = false;
+  } else {
+    playBtn.addEventListener("click", function () {
+      var f = document.createElement("iframe");
+      f.src = embedSrc;
+      f.title = "Фрагмент урока 1";
+      f.allow = "autoplay; fullscreen; picture-in-picture";
+      f.setAttribute("allowfullscreen", "");
+      trialFrame.appendChild(f);
+    });
+  }
+
+})();
+</script>
+
+</body>
+</html>
